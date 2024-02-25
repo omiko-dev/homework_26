@@ -1,7 +1,6 @@
 package com.example.homework_26.di
 
 import com.example.homework_26.BuildConfig
-import com.example.homework_26.data.common.HandleResource
 import com.example.homework_26.data.remote.service.ItemService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -18,10 +17,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Provides
-    @Singleton
-    fun provideHandleResource() = HandleResource()
 
     @Provides
     @Singleton

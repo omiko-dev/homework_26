@@ -1,13 +1,14 @@
 package com.example.homework_26.presentation.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Recycler
+import com.example.homework_26.R
 import com.example.homework_26.databinding.SearchItemLayoutBinding
 import com.example.homework_26.presentation.model.ItemUi
 
@@ -29,30 +30,47 @@ class SearchItemRecyclerAdapter :
 
     inner class SearchItemViewHolder(private val binding: SearchItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind() {
             val item = currentList[adapterPosition]
             with(binding) {
                 tvName.text = item.name
-                item.children?.let { children ->
-                    var num = 0
-                    if(children.isNotEmpty()){
-                        circle1.visibility = View.VISIBLE
-                        children.map {
-                            if(it.children?.isNotEmpty() == true) {
-                                circle2.visibility = View.VISIBLE
-                                it.children.map {
-                                    if(it.children?.isNotEmpty() == true){
-                                        circle3.visibility = View.VISIBLE
-                                        it.children.map {
-                                            if(it.children?.isNotEmpty() == true){
-                                                circle4.visibility = View.VISIBLE
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                var circleNum = 0
+                item.children?.let {
+                    circleNum = getMaxCount(it, maxCount = 4)
+                }
+                repeat(circleNum) {
+                    val circle = createCircleView()
+                    binding.lcCircle.addView(circle)
+                }
+            }
+        }
+
+        private fun createCircleView(): View {
+            val circleView = View(binding.root.context)
+            val size = 10
+            val layoutParams = LinearLayoutCompat.LayoutParams(size, size)
+            layoutParams.marginEnd = 7
+            circleView.layoutParams = layoutParams
+            circleView.background =
+                ContextCompat.getDrawable(binding.root.context, R.drawable.item_circle_shape)
+            return circleView
+        }
+
+        private fun getMaxCount(data: List<ItemUi>, maxCount: Int = 4): Int {
+            fun calculateMaxCount(node: ItemUi): Int {
+                return if (node.children?.isEmpty()!!) {
+                    1
+                } else {
+                    val childCounts = node.children.map { calculateMaxCount(it) }
+                    1 + childCounts.maxOrNull()!!
+                }
+            }
+            (data.maxOfOrNull { calculateMaxCount(it) } ?: 0).let {
+                if (it > maxCount) {
+                    return maxCount
+                } else {
+                    return it
                 }
             }
         }

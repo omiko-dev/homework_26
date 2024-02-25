@@ -1,6 +1,5 @@
 package com.example.homework_26.domain.usecase
 
-import android.util.Log.i
 import com.example.homework_26.data.common.Resource
 import com.example.homework_26.domain.model.ItemModel
 import com.example.homework_26.domain.repository.ItemRepository
@@ -14,14 +13,12 @@ class GetItemUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(filterName: String?): Flow<Resource<List<ItemModel>>> {
         return if (filterName.isNullOrEmpty()) {
-            i("omiko", "first")
             itemRepository.getItems()
         } else {
-            i("omiko", "second")
             itemRepository.getItems().map { resource ->
                 when (resource) {
                     is Resource.Success -> {
-                        val filteredItems = resource.success.filter { it.name.contains(filterName) }
+                        val filteredItems = resource.success.filter { it.name.lowercase().contains(filterName.lowercase().trim()) }
                         Resource.Success(success = filteredItems)
                     }
 

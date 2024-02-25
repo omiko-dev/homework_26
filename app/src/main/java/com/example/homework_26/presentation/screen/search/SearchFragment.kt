@@ -1,8 +1,6 @@
 package com.example.homework_26.presentation.screen.search
 
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
+import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.homework_26.databinding.FragmentSearchBinding
 import com.example.homework_26.presentation.adapter.SearchItemRecyclerAdapter
 import com.example.homework_26.presentation.base.BaseFragment
+import com.example.homework_26.presentation.extention.onDebouncedListener
 import com.example.homework_26.presentation.screen.search.event.SearchEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -51,25 +50,21 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                     state.itemUiList?.let {
                         adapter?.submitList(it)
                     }
+
+                    if(state.loader){
+                        binding.loader.visibility = View.VISIBLE
+                    }else{
+                        binding.loader.visibility = View.GONE
+                    }
                 }
             }
         }
     }
 
-    private fun itemFilterListener() = with(binding) {
-        etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                Log.i("omiko", s.toString()+ "beforeTextChanged")
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.i("omiko", s.toString() + "onTextChanged")
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                Log.i("omiko", s.toString() + "afterTextChanged")
-            }
-        })
+    private fun itemFilterListener() {
+        binding.etSearch.onDebouncedListener(1000L) {
+            viewModel.onEvent(SearchEvent.GetItem(it))
+        }
     }
 }
 

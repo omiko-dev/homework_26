@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:background="@drawable/edit_text_border"
         android:paddingHorizontal="20dp"
-        android:text="@string/enter_category"
+        android:hint="@string/enter_category"
         android:lines="1"
         android:textColor="@color/gray"
         android:textSize="14sp"
@@ -35,6 +35,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="@string/suggestions"/>
+
+    <ProgressBar
+        android:id="@+id/loader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
